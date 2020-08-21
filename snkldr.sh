@@ -1,6 +1,9 @@
 #!/bin/bash -x
 
 pos=0
+declare -A game
+rollCount=1
+
 option(){
 	choice=$((RANDOM % 3))
 	if [ $choice -eq 2 ]
@@ -17,13 +20,14 @@ option(){
 }
 
 dice(){
-        roll=$((RANDOM % 6 + 1))
-        echo "You got: $roll"
-	option
+  roll=$((RANDOM % 6 + 1))
+  echo "You got : $roll"
+  option
 }
 
 while [ $pos -le 100 ]
 do
+	echo $rollCount
 	dice
 	if [ $pos -lt 0 ]
 	then
@@ -31,13 +35,16 @@ do
 	fi
 	if [ $pos -eq 100 ]
 	then
-		echo "Your pos is 100"
-		echo "You won!!!"
+		game[$rollCount]=100
+		echo "Your position is 100"
+		echo "You have won!"
 		exit
 	fi
 	if [ $pos -gt 100 ]
 	then
 		pos=$(($pos - $roll))
 	fi
-	echo Your pos is:$pos
+	game[$rollCount]=$pos
+	echo "Your position is: $pos"
+	rollCount=$(($rollCount + 1))
 done
