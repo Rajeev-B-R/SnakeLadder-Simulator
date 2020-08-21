@@ -1,10 +1,8 @@
 #!/bin/bash -x
 
 pos=0
-
 option(){
 	choice=$((RANDOM % 3))
-	echo $choice
 	if [ $choice -eq 2 ]
 	then
 		echo "Ladder"
@@ -19,8 +17,18 @@ option(){
 }
 
 dice(){
-	roll=$((RANDOM % 6 + 1))
-	echo "You got $roll"
+        roll=$((RANDOM % 6 + 1))
+        echo "You got : $roll"
 	option
 }
-dice
+
+while [ $pos -le 100 ]
+do
+	dice
+	if [ $pos -lt 0 ]
+	then
+		pos=0
+	fi
+	echo "Your position:$pos"
+done
+echo "You won the game"
