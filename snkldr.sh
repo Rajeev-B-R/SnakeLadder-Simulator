@@ -18,7 +18,7 @@ option(){
 
 dice(){
         roll=$((RANDOM % 6 + 1))
-        echo "You got : $roll"
+        echo "You got: $roll"
 	option
 }
 
@@ -29,6 +29,15 @@ do
 	then
 		pos=0
 	fi
-	echo "Your position:$pos"
+	if [ $pos -eq 100 ]
+	then
+		echo "Your pos is 100"
+		echo "You won!!!"
+		exit
+	fi
+	if [ $pos -gt 100 ]
+	then
+		pos=$(($pos - $roll))
+	fi
+	echo Your pos is:$pos
 done
-echo "You won the game"
