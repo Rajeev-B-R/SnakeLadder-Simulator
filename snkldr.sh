@@ -1,64 +1,80 @@
 #! /bin/bash
+echo "*********************Snake and Ladder Game**************"
 
-pos=0
-player1Pos=0
-player2Pos=0
+startPos=0
+finalPos=100
+noPlay=1
+ladder=2
+snake=3
 
-dice(){
-	roll=$((RANDOM % 6 + 1))
-        echo "You got: $roll"
-	choice=$((RANDOM % 3))
-	if [ $choice -eq 2 ]
-	then
-		echo "Ladder"
-		pos=$(($pos + $roll))
-		Condition
-		dice
-	elif [ $choice -eq 1 ]
-	then
-		echo "Snake"
-		pos=$(($pos - $roll))
-	else
-		echo "No play"
-	fi
+noDice=0
+currPos=$startPos
+posPlayer1=$startPos
+posPlayer2=$startPos
+
+function playerNextMove
+{
+        currPos=$1
+        player=$2
+        roll
+        ((noDice++))
+        case $playerMove in
+                $noPlay)
+                        currPos=$currPos
+                        echo -e "$2\nDice:$dieValue\nMove:No Play\nPosition stays same!\nCurrent postion:$currPos\nPositon after turn:$currPos\n\n"
+                        ;;
+                $ladder)
+                        ladderMoves $player
+                        ;;
+                $snake)
+                        snakeMoves $player
+                        ;;
+        esac
+        printf "Number of dice throws:$noDice\n"
+        if (( $currPos == 100 ))
+        then
+                echo -e "\n$2 wins!"
+                exit
+        fi
 }
 
-Condition(){
-	if [ $pos -lt 0 ]
-	then
-		pos=0
-	fi
-	if [ $pos -eq 100 ]
-	then
-		echo "Your position is 100"
-		echo "Player $player won!"
-		exit
-	fi
-	if [ $pos -gt 100 ]
-	then
-		pos=$(($pos - $roll))
-	fi
-	echo Your position is:$pos
+function roll()
+{
+        playerMove=$(( RANDOM%3+1 ))
+        dieValue=$(( RANDOM%6+1 ))
 }
 
-Game(){
-	while [ $pos -ne 100 ]
-	do
-		echo "*********Player:$player*********"
-		if [ $player -eq 1 ]
-		then
-			pos=$player1Pos
-			dice
-			Condition
-			player1Pos=$pos
-			player=2
-		else
-			pos=$player2Pos
-			dice
-			Condition
-			player2Pos=$pos
-			player=1
-		fi
-	done
+function ladderMoves()
+{
+        currPos=$(( $currPos + $dieValue ))
+        if (( $currPos > $finalPos ))
+        then
+                currPos=$(( $currPos - $dieValue ))
+        fi
+        echo -e "$1\nDice:$dieValue\nMove:Ladder\nPlayer position increased by $dieValue\nCurrent position:$(( $currPos-$dieValue ))\nPositon after turn:$currPos\n\n"
 }
-Game
+
+function snakeMoves()
+{
+        echo -e "$1\nDice:$dieValue\nMove:Snake\nPlayer position decreased by $dieValue\nCurrent position:$currPos"
+        currPos=$(( $currPos - $dieValue ))
+        if (( $currPos < $startPos))
+        then
+                currPos=$startPos
+        fi
+        echo -e "Positon after turn:$currPos\n\n"
+}
+
+function play()
+{
+        while (( $posPlayer1 < $finalPos && $posPlayer2 < $finalPos ))
+        do
+                playerNextMove $posPlayer1 Player1
+                posPlayer1=$currPos
+
+		playerNextMove $posPlayer2 Player2
+                posPlayer2=$currPos
+        done
+}
+
+play
